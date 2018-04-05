@@ -33,7 +33,7 @@ saveMailFile = r'./mailBox'
 
 codingFetch = 'utf-8'
 ```
-- Second:  Run by `$ python3 Violat`
+- Second:  Run by `$ python3 Violat.py`
 
 ## License
 See the [LICENSE](./LICENSE) file for license rights and limitations.
