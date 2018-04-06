@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import poplib, smtplib, email.utils, mailInit
+import poplib, smtplib, email.utils
 from email.parser import Parser as ps
 from email.message import Message as ms
 
+import configparser
+
 #使用utf-8编码
-codingFetch = mailInit.codingFetch
+codingFetch = 'utf-8'
 def toUnicode(msBytes, codingFetch=codingFetch):
     return [line.decode(codingFetch) for line in msBytes]
 
@@ -41,9 +43,9 @@ def sendMs():
     msg['Date'] = email.utils.formatdate()
     msg.set_payload(text)
     
-    server = smtplib.SMTP_SSL(mailInit.smtpServerName)
-    server.ehlo(mailInit.smtpServerName)
-    server.login(mailInit.sender, mailInit.mailPassWd)
+    server = smtplib.SMTP_SSL(config['DEFAULT']['smtpServerName'])
+    server.ehlo(config['DEFAULT']['smtpServerName'])
+    server.login(config['DEFAULT']['sender'], config['DEFAULT']['mailPassWd'])
     
     try:
         failed = server.sendmail(From, To, str(msg))
@@ -146,7 +148,7 @@ def showMs(i, msgList):
 #把邮件保存到本地
 def saveMs(i, mailFile, msgList):
     if 1 <= i <= len(msgList):
-        saveFile = (open(mailFile, 'a', encoding=mailInit.codingFetch))
+        saveFile = (open(mailFile, 'a', encoding=config['DEFAULT']['codingFetch']))
         saveFile.write('\n' + msgList[i-1] + '-' * 80 + '\n')
     else:
         print('Bad message number')
@@ -229,11 +231,15 @@ def interact(msgList, mailFile):
     return toDelete
 
 if __name__ == '__main__':
-    import mailInit#getpass
-    mailServer = mailInit.popServerName
-    mailUser = mailInit.popUserName
-    mailFile = mailInit.saveMailFile
-    mailPassWd = mailInit.mailPassWd#getpass.getpass('Password for %s: ' % mailServer)
+    #import mailInit#getpass
+    
+    config = configparser.ConfigParser()
+    config.read('mailInit.ini')
+    
+    mailServer = config['DEFAULT']['popServerName']
+    mailUser = config['DEFAULT']['popUserName']
+    mailFile = config['DEFAULT']['saveMailFile']
+    mailPassWd = config['DEFAULT']['mailPassWd']#getpass.getpass('Password for %s: ' % mailServer)
     
     print('[Violet email client]')
     
